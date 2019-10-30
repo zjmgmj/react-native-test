@@ -6898,6 +6898,11 @@ xcode@^2.0.0:
     simple-plist "^1.0.0"
     uuid "^3.3.2"
 
+xe-utils@^2.2.11:
+  version "2.2.11"
+  resolved "https://registry.npm.taobao.org/xe-utils/download/xe-utils-2.2.11.tgz?cache=0&sync_timestamp=1571222802755&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fxe-utils%2Fdownload%2Fxe-utils-2.2.11.tgz#c0a7cea6cf12b692c57301409a00c6b19af0cecd"
+  integrity sha1-wKfOps8StpLFcwFAmgDGsZrwzs0=
+
 xml-name-validator@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npm.taobao.org/xml-name-validator/download/xml-name-validator-3.0.0.tgz#6ae73e06de4d8c6e47f9fb181f78d648ad457c6a"

@@ -1,12 +1,14 @@
 import {
-  View
+  View,
+  SafeAreaView,
+  ScrollView,
+  Text
 } from "react-native";
 import React, { Component } from "react";
-
 import Head from '../../components/head'
 // import Editor from '../../components/editor'
 
-export default class Home extends Component {
+class Home extends Component {
   constructor(props) { 
     super(props)
     this.state = {
@@ -21,47 +23,54 @@ export default class Home extends Component {
       }
     }
   }
-  // componentWillMount() {
-  //   console.log('--------componentWillMount')
-  //   // this.fetchData()
-  // }
-
-  // async function fetchRequest(params){
-  //   let body = convertBody(params);
-  //   return new Promise((resolve, reject) => {
-  //       fetch(convertUrl(baseUrl, params),{
-  //           method: method,
-  //           headers: headers,
-  //           body: body
-  //       })
-  //       .then((response) => response.json())
-  //       .then((responseJson) => {
-  //           resolve(responseJson);
-  //       })
-  //       .catch((error) => {
-  //           if (ApiModule.isDebug) {
-  //               console.error("request error: " + error);
-  //           };
-  //           reject(error);
-  //       });
-  //   });
-  // }
-  // fetchData() { 
-  //   return fetch("https://www.apiopen.top/novelSearchApi?name=", {headers: {"Content-Type": "application/x-www-form-urlencoded"}}).then((responseJson) => {      
-  //     return responseJson.json()
-  //   }).then((responseJson) => {
-  //     console.log(responseJson)
-  //     return responseJson
-  //   }).catch((error) => { 
-  //     console.error(error)
-  //   })
-  // }
   render() {
-    // this.fetchData()
-    return (     
+    return (
       <View>    
         <Head {...this.props} config={this.state.headConfig} />
-      </View>      
+        <ListView />
+      </View>
     )
   }  
 }
+
+
+class ListView extends Component {
+  constructor(props) { 
+    this.state = {
+      itemView: []
+    }
+  }
+  componentWillMount() { 
+    this.renderItem()
+  }
+  renderItem() { 
+    const ItemView = []
+    local.get({ key: 'content' }).then(res => {
+      console.log('--res', res)
+      res.map(item => {
+        const key = Object.keys(item)
+        ItemView.push(
+          <View>
+            <View>{key[0]}</View>
+            <View>{item[key[0]]}</View>
+          </View>
+        )
+      })
+      this.setState({
+        itemView: ItemView
+      })
+    }).catch(err => { 
+      console.log(err)
+    })
+  }
+  render() {
+    console.log('itemView', this.state.itemView)
+    return (
+      <SafeAreaView>
+        <ScrollView>{this.state.itemView}</ScrollView>
+      </SafeAreaView>      
+    )
+  }
+}
+
+export default Home

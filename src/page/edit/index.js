@@ -8,50 +8,55 @@ class EditContent extends Component {
       text: ''
     }
   }
-  saveContent() { 
-    console.log('---------save', this.state.text)
-    console.log('saveContent', this.refs.textInput._lastNativeText)
-    storage.save({
-      key: 'test',
-      data: {
-        content: '-----test---1111'
-      },
+  saveContent(res) { 
+    let contentList = []
+    if (res) contentList = res
+    console.log('******contentList', contentList)
+    const content = this.refs.textInput._lastNativeText
+    const nowDate = XEUtils.toDateString(new Date())
+    const obj = {}
+    obj[nowDate] = content
+    contentList.push(obj)
+    local.set({
+      key: 'content',
+      data: contentList,
       expires: null
-    }) 
-    storage.getAllDataForKey('test').then(tests => { 
-      console.log('-----------test', tests)
     })
   }
   render() {
-    storage.getAllDataForKey('test').then(tests => { 
-      console.log('-----------test', tests)
-    })
     const { goBack } = this.props.navigation
     const headConfig = {
       leftComponent: {
-        icon: 'back', color: '#fff', onPress: () => { 
+        icon: 'arrow-back', color: '#fff', onPress: () => { 
           goBack()
         }
       },      
       rightComponent: {
         icon: 'save', color: '#fff', onPress: () => { 
           this.refs.textInput.blur()
-          console.log('-------------rightComponent')
-          this.saveContent()
+          local.get({ key: 'content' }).then((res) => {
+            this.saveContent(res)
+          }).catch(err => { 
+            console.log('-------err', err)
+            this.saveContent()
+          })
         }
       }
     }
-    const nowTime = new Date()
+    const nowTime = XEUtils.toDateString(new Date())
     console.log('nowTime', nowTime)
     return (
       <View>
         <Header {...this.props} config={headConfig}></Header>
-        {/* <Text>{nowTime}</Text> */}
-        <TextInput ref="textInput" placeholder="这一刻的想法..." onEndEditing={(evt) => { 
-          this.setState({
-            text: evt.nativeEvent.text
-          })
-        }}></TextInput>        
+        <Text>{nowTime}</Text>
+        <View>
+          <TextInput ref="textInput" placeholder="这一刻的想法..." onEndEditing={(evt) => { 
+            console.log('evt.nativeEvent.text', evt.nativeEvent.text)
+            this.setState({
+              text: evt.nativeEvent.text
+            })
+          }}></TextInput>
+        </View>
       </View>
     )    
   }

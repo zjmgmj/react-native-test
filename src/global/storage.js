@@ -11,7 +11,7 @@ const storage = new Storage({
   storageBackend: AsyncStorage,
   
   // 数据过期时间，默认一整天（1000 * 3600 * 24 毫秒），设为null则永不过期
-  defaultExpires: null,
+  defaultExpires: 1000 * 3600 * 24,
 
   // 读写时在内存中缓存数据。默认启用。
   enableCache: true
@@ -25,7 +25,98 @@ const storage = new Storage({
   // sync: require('你可以另外写一个文件专门处理sync')
 })
 
-export default storage
+const local = {
+  /**
+   * 设置缓存
+   * @params key  必传 唯一标识
+   * @params data  数据  type：string || object
+   * @params expires 过期时间  不传默认永久  单位：ms
+   * @params id  非必传 标识
+   *
+   * */
+  
+  set({ key, data, expires, id }) { 
+    let setValue = JSON.stringify(data)
+    const obj = {
+      key: key,
+      data: setValue,
+      expires: expires ? expires : null
+    } 
+    if (id) obj.id = id
+    storage.save(obj)
+  },
+
+  /**
+   * 根据key 或者 key-id的到数据
+   * @params key 必传
+   * @params id  可为空
+   *
+   * */
+  get({ key, id }) { 
+    const obj = {
+      key: key
+    }
+    if (id) obj.id = id
+    return storage.load(obj).then((res) => { 
+      // if (res) return JSON.parse(res)      
+      // return res ? JSON.parse(res) : null
+      return JSON.parse(res)
+    }).catch(err => { 
+      throw err      
+    })
+  },
+
+  /**
+   * 删除单个数据
+   * key 必传
+   * @params key 删除kay所对应的数据，必传
+   *
+   * @params id  删除id对应的数据 若删除的数据中有id，则必传
+   */
+
+  remove({ key, id }) { 
+    const obj = {
+      key: key
+    }
+    if (id) obj.id = id
+    storage.remove(obj)
+  },
+
+  /**
+   * 清空所有map，移除所有key-id数据（但会保留只有key的数据）
+   * 测试 刷新之后有效，所以应该是在退出app时执行的
+   * */
+  clearMap() { 
+    storage.clearMap()
+  },
+
+  /**
+   * 清空某个key下的所有数据（仅key-id数据）
+   * @paramas key
+   * */
+  clearMapForKey(key) { 
+    storage.clearMapForKey(key)
+  },
+
+  /**
+   * 获取key下的 所有数据(仅key-id数据)
+   * */
+  getAllDataForKey(key){
+    return storage.getAllDataForKey(key).then(ret => {
+      return ret
+    })
+  },
+
+  /**
+   * 获取某个key下的所有ID（仅key-id数据）
+   * */
+  getIdsForKey(key){
+    return storage.getIdsForKey(key).then(ids => {
+      return ids
+    })
+  }
+}
+export default local
 
 // 最好在全局范围内创建一个（且只有一个）storage实例，方便直接调用
 
