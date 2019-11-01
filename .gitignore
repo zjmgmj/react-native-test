@@ -61,5 +61,5 @@ buck-out/
 .idea
 .vscode
 node_modules
-android
+# android
 ios
